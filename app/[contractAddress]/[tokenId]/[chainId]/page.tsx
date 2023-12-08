@@ -1,4 +1,7 @@
 "use client";
+
+// Account - IFRAME
+
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -9,8 +12,9 @@ import { TbLogo } from "@/components/icon";
 import { useGetApprovals, useNft, useTBADetails } from "@/lib/hooks";
 import { TbaOwnedNft } from "@/lib/types";
 import { getAddress } from "viem";
-import { TokenDetail } from "./TokenDetail";
 import { HAS_CUSTOM_IMPLEMENTATION } from "@/lib/constants";
+import { chainIdToOpenseaAssetUrl } from "@/lib/constants";
+import "./page.css";
 
 interface TokenParams {
   params: {
@@ -119,18 +123,7 @@ export default function Token({ params, searchParams }: TokenParams) {
       <div className="max-w-screen relative mx-auto aspect-square max-h-screen overflow-hidden bg-white">
         <div className="relative h-full w-full">
           {account && nftImages && nftMetadata && (
-            <TokenDetail
-              isOpen={showTokenDetail}
-              handleOpenClose={setShowTokenDetail}
-              approvalTokensCount={approvalData?.filter((item) => item.hasApprovals).length}
-              account={account}
-              tokens={tokens}
-              title={nftMetadata.title}
-              chainId={chainIdNumber}
-              logo={logo}
-              accounts={[tba, tbaV2 as string]}
-              handleAccountChange={handleAccountChange}
-            />
+            <div className="absolute left-4 top-4 z-10 rounded-full cursor-pointer">Rank</div>
           )}
           <div className="max-h-1080[px] relative h-full w-full max-w-[1080px]">
             {showLoading ? (
@@ -139,18 +132,66 @@ export default function Token({ params, searchParams }: TokenParams) {
               </div>
             ) : (
               <div
-                className={`bg-white h-full w-full grid grid-cols-1 grid-rows-1 transition ${
-                  imagesLoaded ? "" : "blur-xl"
-                }`}
+                className={`bg-white h-full w-full grid grid-cols-1 grid-rows-1 transition
+                  }`}
               >
                 {!isNil(nftImages) ? (
                   nftImages.map((image, i) => (
-                    <img
-                      key={i}
-                      className="col-span-1 col-start-1 row-span-1 row-start-1 translate-x-0"
-                      src={image}
-                      alt="Nft image"
-                    />
+                    <>
+                      <div className="bg-ghost bg-cover overflow-x-scroll no-scrollbar items-center justify-center right-0 sm:mt-0">
+                        <div
+                          className={`relative items-center justify-center`}
+                        >
+                          <div className="mt-20 ml-[5%] pb-24 grid grid-cols grid-flow-row gap-28">
+                            {tokens.map((t, i) => {
+                              let media = t?.media[0]?.gateway || t?.media[0]?.raw;
+                              const isVideo = t?.media[0]?.format === "mp4";
+                              if (isVideo) {
+                                media = t?.media[0]?.raw;
+                              }
+
+                              const openseaUrl = `${chainIdToOpenseaAssetUrl[chainIdNumber]}/${t.contract.address}/${t.tokenId}`;
+
+                              return (
+                                <div className="card work">
+                                  <div className="img-section">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="77" width="76"><path fill-rule="nonzero" fill="#3F9CBB" d="m60.91 71.846 12.314-19.892c3.317-5.36 3.78-13.818-2.31-19.908l-26.36-26.36c-4.457-4.457-12.586-6.843-19.908-2.31L4.753 15.69c-5.4 3.343-6.275 10.854-1.779 15.35a7.773 7.773 0 0 0 7.346 2.035l7.783-1.945a3.947 3.947 0 0 1 3.731 1.033l22.602 22.602c.97.97 1.367 2.4 1.033 3.732l-1.945 7.782a7.775 7.775 0 0 0 2.037 7.349c4.49 4.49 12.003 3.624 15.349-1.782Zm-24.227-46.12-1.891-1.892-1.892 1.892a2.342 2.342 0 0 1-3.312-3.312l1.892-1.892-1.892-1.891a2.342 2.342 0 0 1 3.312-3.312l1.892 1.891 1.891-1.891a2.342 2.342 0 0 1 3.312 3.312l-1.891 1.891 1.891 1.892a2.342 2.342 0 0 1-3.312 3.312Zm14.19 14.19a2.343 2.343 0 1 1 3.315-3.312 2.343 2.343 0 0 1-3.314 3.312Zm0 7.096a2.343 2.343 0 0 1 3.313-3.312 2.343 2.343 0 0 1-3.312 3.312Zm7.096-7.095a2.343 2.343 0 1 1 3.312 0 2.343 2.343 0 0 1-3.312 0Zm0 7.095a2.343 2.343 0 0 1 3.312-3.312 2.343 2.343 0 0 1-3.312 3.312Z"></path></svg>                </div>
+                                  <div className="card-desc">
+                                    <div className="card-header">
+                                      <div className="card-title">AK 47</div>
+                                      <div className="card-menu">
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                      </div>
+                                    </div>
+
+                                    <a href={openseaUrl} target="_blank" className="cursor-pointer">
+                                      <img alt="Card" src={media} />
+                                    </a>
+
+                                  </div></div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="absolute mt-20 ml-[60%]">
+
+                        <div>
+                          <img
+                            key={i}
+                            className="avatar"
+                            src="https://www.freepnglogos.com/uploads/call-of-duty-png/call-of-duty-infinite-warfare-render-28.png"
+                            alt="Nft image"
+                          />
+                        </div>
+                      </div>
+
+
+                    </>
+
                   ))
                 ) : (
                   <></>
@@ -160,6 +201,6 @@ export default function Token({ params, searchParams }: TokenParams) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
