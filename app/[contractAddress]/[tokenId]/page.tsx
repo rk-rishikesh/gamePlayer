@@ -153,7 +153,7 @@ export default function Token({ params, searchParams }: TokenParams) {
           <div className="relative w-full h-full max-w-[1080px] max-h-1080[px]">
             {nftMetadataLoading ? (
               <div className="h-20 w-20 absolute -translate-x-[50%] -translate-y-[50%] top-[50%] left-[45%] z-10 animate-bounce">
-                <TbLogo />
+                He;llo
               </div>
             ) : (
               <div
